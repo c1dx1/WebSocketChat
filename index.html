@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat Client</title>
+</head>
+<body>
+    <h1>Chat</h1>
+    <input id="username" type="text" placeholder="Введите ваше имя" />
+    <textarea id="messages" cols="30" rows="10" readonly></textarea>
+    <br />
+    <input id="message" type="text" placeholder="Введите сообщение" />
+    <button onclick="sendMessage()">Отправить</button>
+
+    <script>
+        const socket = new WebSocket('ws://localhost:8080/ws');
+
+        socket.onmessage = function(event) {
+            const messages = document.getElementById('messages');
+            const msg = JSON.parse(event.data);
+            messages.value += msg.username + ": " + msg.content + "\n";
+        };
+
+        function sendMessage() {
+            const username = document.getElementById('username').value;
+            const content = document.getElementById('message').value;
+            socket.send(JSON.stringify({username: username, content: content}));
+        }
+    </script>
+</body>
+</html>
